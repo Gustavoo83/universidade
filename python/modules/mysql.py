@@ -35,5 +35,3 @@ class MySQL:
                 else:
                     self.connection.commit()
                     return cursor.lastrowid
-
- 
