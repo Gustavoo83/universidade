@@ -1,5 +1,4 @@
 from modules.mysql import MySQL
-
 class Aluno:
     def __init__ (self, nome, email, cpf, telefone, endereco):
         self.nome = nome
@@ -25,7 +24,6 @@ class Aluno:
             %s,       
         )
         """
-        
         values = (
             self.nome,
             self.email,
@@ -36,9 +34,24 @@ class Aluno:
         )
         
         return db.execute_query(query, values)
+    
+    def listar(db: MySQL):
+        query = """
+            SELECT 
+                id, 
+                nome, 
+                email, 
+                cpf, 
+                telefone, 
+                endereco, 
+                matricula
+            FROM 
+                alunos
+        """
+        return db.execute_query(query)
       
     def editar(self):
         pass
+    
     def transferir(self):
         pass
-            
