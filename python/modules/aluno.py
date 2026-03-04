@@ -21,7 +21,7 @@ class Aluno:
             %s,
             %s,
             %s,
-            %s,       
+            %s    
         )
         """
         values = (
@@ -29,8 +29,7 @@ class Aluno:
             self.email,
             self.cpf,
             self.telefone,
-            self.endereco,
-            self.matricula
+            self.endereco
         )
         
         return db.execute_query(query, values)
