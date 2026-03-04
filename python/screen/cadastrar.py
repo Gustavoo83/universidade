@@ -1,6 +1,6 @@
 from modules.mysql import MySQL
 from modules.aluno import Aluno
- 
+
 from PySide6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -9,129 +9,118 @@ from PySide6.QtWidgets import (
     QPushButton,
     QMessageBox
 )
-from PySide6.QtCore import Qt
- 
- 
+
 class Cadastrar:
     def __init__(self, app):
         self.app = app
         self.janela = QWidget()
         self.layout = QVBoxLayout()
         self.banco = MySQL()
- 
+
         self.campos = {}
- 
+
         self.configurar_janela()
         self.criar_componentes()
-        self.aplicar_estilo()
- 
+        self.aplicar_estilo()  # 🔹 Apenas estilização adicionada
+
     def configurar_janela(self):
-        self.janela.setWindowTitle("Sistema Acadêmico - Cadastro de Aluno")
- 
+        self.janela.setWindowTitle("Cadastrar Aluno")
+
         screen = self.app.primaryScreen().geometry()
         largura = int(screen.width() * 0.4)
-        altura = int(screen.height() * 0.65)
- 
+        altura = int(screen.height() * 0.6)
+
         self.janela.resize(largura, altura)
-        self.janela.setMinimumSize(420, 550)
+        self.janela.setMinimumSize(400, 500)
         self.janela.setLayout(self.layout)
- 
+
     def criar_componentes(self):
- 
-        # 🔹 TÍTULO PRINCIPAL
-        titulo = QLabel("Cadastro de Aluno")
-        titulo.setAlignment(Qt.AlignCenter)
-        titulo.setObjectName("titulo")
-        self.layout.addWidget(titulo)
- 
         componentes = {
-            "nome": "Nome completo:",
-            "email": "Email:",
-            "cpf": "CPF:",
-            "telefone": "Telefone:",
-            "endereco": "Endereço:"
+            "nome": "Digite seu nome:",
+            "email": "Digite seu email:",
+            "cpf": "Digite seu cpf:",
+            "telefone": "Digite seu telefone:",
+            "endereco": "Digite seu endereco:"
         }
- 
+
         for chave, valor in componentes.items():
             label = QLabel(valor)
             campo = QLineEdit()
- 
+
             self.layout.addWidget(label)
             self.layout.addWidget(campo)
- 
+
             self.campos[chave] = campo
- 
-        botao_cadastro = QPushButton("Cadastrar Aluno")
+
+        botao_cadastro = QPushButton("Cadastrar")
         self.layout.addWidget(botao_cadastro)
- 
+
         botao_cadastro.clicked.connect(self.cadastrar)
- 
+
+    # 🔹 ESTILIZAÇÃO
     def aplicar_estilo(self):
         self.janela.setStyleSheet("""
             QWidget {
-                background-color: #0A192F;
-                color: #CCD6F6;
+                background-color: #FFFFFF;
+                color: #1F2937;
                 font-size: 14px;
             }
- 
+
             QLabel {
-                color: #8892B0;
                 margin-top: 8px;
+                font-weight: 500;
             }
- 
-            QLabel#titulo {
-                color: #4DA6FF;
-                font-size: 22px;
-                font-weight: bold;
-                margin-bottom: 15px;
-            }
- 
+
             QLineEdit {
-                background-color: #112240;
-                border: 1px solid #233554;
+                background-color: #F9FAFB;
+                border: 1px solid #D1D5DB;
                 border-radius: 6px;
                 padding: 8px;
-                color: #CCD6F6;
             }
- 
+
             QLineEdit:focus {
-                border: 1px solid #4DA6FF;
+                border: 2px solid #1E90FF;
+                background-color: #FFFFFF;
             }
- 
+
             QPushButton {
-                background-color: #1E90FF;
-                color: white;
+                background-color: #FFFFFF;
+                color: #1E90FF;
+                border: 2px solid #1E90FF;
                 border-radius: 8px;
                 padding: 10px;
                 font-weight: bold;
-                margin-top: 18px;
+                margin-top: 15px;
             }
- 
+
             QPushButton:hover {
-                background-color: #187BDC;
+                background-color: #1E90FF;
+                color: white;
             }
- 
+
             QPushButton:pressed {
-                background-color: #0F5FBF;
+                background-color: #187BDC;
+                border: 2px solid #187BDC;
+                color: white;
             }
         """)
- 
+
     def validar_campos(self):
         dados = {chave: campo.text().strip() for chave, campo in self.campos.items()}
- 
+
         for chave, valor in dados.items():
             if not valor:
                 return False, f"O campo '{chave}' não pode estar vazio."
- 
+
         if not dados["cpf"].isdigit() or len(dados["cpf"]) != 11:
             return False, "CPF deve conter exatamente 11 números."
- 
+
         return True, dados
- 
+
     def cadastrar(self):
- 
+
         valido, resultado = self.validar_campos()
- 
+
         if not valido:
             QMessageBox.warning(
                 self.janela,
@@ -139,7 +128,7 @@ class Cadastrar:
                 resultado
             )
             return
- 
+
         aluno = Aluno(
             resultado["nome"],
             resultado["email"],
@@ -147,28 +136,28 @@ class Cadastrar:
             resultado["telefone"],
             resultado["endereco"],
         )
- 
+
         try:
             self.banco.connect()
             aluno.cadastrar(self.banco)
- 
+
             QMessageBox.information(
                 self.janela,
                 "Sucesso",
-                "Aluno cadastrado com sucesso!"
+                "Aluno Cadastrado!"
             )
             self.limpar_campos()
- 
+
         except Exception as e:
             QMessageBox.critical(
                 self.janela,
                 "Erro",
-                f"Erro ao cadastrar: {e}"
+                f"Erro ao Cadastrar: {e}"
             )
- 
+
         finally:
             self.banco.disconnect()
- 
+
     def limpar_campos(self):
         for campo in self.campos.values():
             campo.clear()
